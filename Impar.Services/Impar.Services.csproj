@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Impar.Common\Impar.Common.csproj" />
+    <ProjectReference Include="..\Impar.DTO\Impar.DTO.csproj" />
+    <ProjectReference Include="..\Impar.Repositories\Impar.Repositories.csproj" />
+  </ItemGroup>
+
+</Project>

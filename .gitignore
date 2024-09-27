@@ -1,0 +1,17 @@
+﻿################################################################################
+# Este arquivo .gitignore foi criado automaticamente pelo Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/Impar.Api/bin/Debug/net6.0
+/Impar.Api/obj
+/Impar.Common/bin/Debug/net6.0
+/Impar.Common/obj
+/Impar.Domain/bin/Debug/net6.0
+/Impar.Domain/obj
+/Impar.DTO/bin/Debug/net6.0
+/Impar.DTO/obj
+/Impar.Repositories/bin/Debug/net6.0
+/Impar.Repositories/obj
+/Impar.Services/bin/Debug/net6.0
+/Impar.Services/obj
