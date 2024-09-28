@@ -7,5 +7,6 @@ namespace Impar.DTO.Request.Cards
         public string? Name { get; init; }
         public CardStatusEnum? Status { get; init; }
         public string? PhotoBase64 { get; init; }
+        public int? PhotoId { get; init; }
     }
 }

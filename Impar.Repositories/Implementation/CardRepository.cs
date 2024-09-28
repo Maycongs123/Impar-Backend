@@ -2,7 +2,6 @@
 using Impar.Common.Configurations;
 using Impar.Common.Pagging;
 using Impar.Domain.Entities.Cards;
-using Impar.Domain.Entities.Photos;
 using Impar.Domain.Filters.Cards;
 using Impar.Domain.Views.Cards;
 using Microsoft.Extensions.Options;
@@ -132,17 +131,37 @@ namespace Impar.Repositories.Implementation
         }
 
 
-        public async Task<Card> GetById(int id)
+        public async Task<CardView> GetCardWithPhotoById(int id)
         {
             var query = @"
                        SELECT 
                            c.Id,
                            c.Name,
                            c.Status,
-                           p.Id As PhotoId,
+                           p.Id AS PhotoId,
                            p.Base64 AS PhotoBase64
                        FROM Cards c
                        LEFT JOIN Photos p ON c.PhotoId = p.Id
+                       WHERE c.Id = @Id;";
+
+            var param = new { Id = id };
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var result = await connection.QueryFirstOrDefaultAsync<CardView>(query, param);
+                return result;
+            }
+        }
+
+        public async Task<Card> GetById(int id)
+        {
+            var query = @"
+                       SELECT 
+                           c.Id,
+                           c.Name,
+                           c.Status
+                       FROM Cards c
                        WHERE c.Id = @Id;";
 
             var param = new { Id = id };
@@ -157,18 +176,28 @@ namespace Impar.Repositories.Implementation
 
         public async Task Delete(int id)
         {
-            var query = @"
-                        DELETE FROM Cards 
-                        WHERE Id = @Id;";
 
-            var param = new { Id = id };
+            var getPhotoIdQuery = "SELECT PhotoId FROM Cards WHERE Id = @Id;";
+
+            var deleteCardQuery = "DELETE FROM Cards WHERE Id = @Id;";
+
+            var deletePhotoQuery = "DELETE FROM Photos WHERE Id = @PhotoId;";
 
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                await connection.ExecuteAsync(query, param);
+
+                var photoId = await connection.ExecuteScalarAsync<int?>(getPhotoIdQuery, new { Id = id });
+
+                await connection.ExecuteAsync(deleteCardQuery, new { Id = id });
+
+                if (photoId.HasValue)
+                {
+                    await connection.ExecuteAsync(deletePhotoQuery, new { PhotoId = photoId.Value });
+                }
             }
         }
+
 
         public async Task Update(Card card)
         {
@@ -176,16 +205,14 @@ namespace Impar.Repositories.Implementation
                         UPDATE Cards 
                         SET 
                             Name = @Name, 
-                            Status = @Status, 
-                            PhotoId = @PhotoId
+                            Status = @Status
                         WHERE Id = @Id;";
 
             var param = new
             {
                 Id = card.Id,
                 Name = card.Name,
-                Status = card.Status,
-                PhotoId = card.PhotoId
+                Status = card.Status
             };
 
             using (var connection = new SqlConnection(_connectionString))
@@ -194,5 +221,27 @@ namespace Impar.Repositories.Implementation
                 await connection.ExecuteAsync(query, param);
             }
         }
+
+        public async Task UpdatePhotoBase64(int photoId, string base64)
+        {
+            var query = @"
+                 UPDATE Photos 
+                 SET 
+                     Base64 = @Base64
+                 WHERE Id = @Id;";
+
+            var param = new
+            {
+                Id = photoId,
+                Base64 = base64
+            };
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                await connection.ExecuteAsync(query, param);
+            }
+        }
+
     }
 }

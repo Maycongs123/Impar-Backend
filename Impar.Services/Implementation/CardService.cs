@@ -2,6 +2,7 @@
 using Impar.Common.DTO;
 using Impar.Common.Pagging;
 using Impar.Domain.Entities.Cards;
+using Impar.Domain.Views.Cards;
 using Impar.DTO.Request.Cards;
 using Impar.DTO.Response.Cards;
 using Impar.Repositories;
@@ -32,7 +33,7 @@ namespace Impar.Services.Implementation
 
             card.Id = cardId; 
 
-            return Result.Success(card.ToResponse());
+            return Result.Success(card.ToResponse(base64Photo));
         }
 
 
@@ -52,7 +53,7 @@ namespace Impar.Services.Implementation
 
         public async Task<Result<CardResponse>> GetById(int id)
         {
-            Card card = await _cardRepository.GetById(id);
+            CardView card = await _cardRepository.GetCardWithPhotoById(id);
             if (card is null)
             {
                 return Result.Failure(Messages.CardNotFound, HttpStatusCode.NotFound);
@@ -78,7 +79,7 @@ namespace Impar.Services.Implementation
 
         public async Task<Result<CardResponse>> Patch(int id, PatchRequest request)
         {
-            Card card = await _cardRepository.GetById(id);
+            CardView card = await _cardRepository.GetCardWithPhotoById(id);
             if (card is null)
             {
                 return Result.Failure(Messages.CardNotFound, HttpStatusCode.NotFound);
@@ -86,6 +87,11 @@ namespace Impar.Services.Implementation
 
             card.Name = request.Name ?? card.Name;
             card.Status = request.Status ?? card.Status;
+
+            if (request.PhotoId.HasValue)
+            {
+                await _cardRepository.UpdatePhotoBase64((int)request.PhotoId, request.PhotoBase64);
+            }
 
             await _cardRepository.Update(card);
 

@@ -56,7 +56,6 @@ namespace Impar.Api.Controllers
         }
 
         [HttpDelete("{id:int}", Name = nameof(DeleteCard))]
-        [Authorize]
         [SwaggerOperation(Summary = "Delete card by Id", Description = "Delete card by ID")]
         [SwaggerResponse(200, "card deleted", typeof(Result))]
         public async Task<ActionResult> DeleteCard(
