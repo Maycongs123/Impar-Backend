@@ -5,7 +5,7 @@ namespace Impar.DTO.Request.Cards
     /// <summary>
     /// Represents a card creation request.
     /// </summary>
-    public class CardRequest
+    public class CreateCardRequest
     {
         /// <summary>
         /// The name of the card.
@@ -19,7 +19,7 @@ namespace Impar.DTO.Request.Cards
 
         public Card ToDomain() => (Card)this;
 
-        public static implicit operator Card(CardRequest dto)
+        public static implicit operator Card(CreateCardRequest dto)
         {
             if (dto is null)
                 return null;
@@ -31,4 +31,5 @@ namespace Impar.DTO.Request.Cards
             };
         }
     }
+
 }
