@@ -21,9 +21,8 @@ namespace Impar.Services.Implementation
 
         public async Task<Result<CardResponse>> Create(CreateCardRequest request)
         {
-            string base64Photo = await ConvertToBase64Async(request.Photo);
 
-            int photoId = await _cardRepository.CreatePhoto(base64Photo);
+            int photoId = await _cardRepository.CreatePhoto(request.Photo);
 
             Card card = request.ToDomain();
 
@@ -33,23 +32,8 @@ namespace Impar.Services.Implementation
 
             card.Id = cardId; 
 
-            return Result.Success(card.ToResponse(base64Photo));
+            return Result.Success(card.ToResponse(request.Photo));
         }
-
-
-        public async Task<string> ConvertToBase64Async(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-                return null;
-
-            using (var memoryStream = new MemoryStream())
-            {
-                await file.CopyToAsync(memoryStream);
-                var fileBytes = memoryStream.ToArray();
-                return Convert.ToBase64String(fileBytes);
-            }
-        }
-
 
         public async Task<Result<CardResponse>> GetById(int id)
         {

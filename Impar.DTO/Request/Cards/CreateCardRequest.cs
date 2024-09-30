@@ -15,7 +15,7 @@ namespace Impar.DTO.Request.Cards
         /// <summary>
         /// The Photo of the card.
         /// </summary>
-        public IFormFile Photo { get; set; }
+        public string Photo { get; set; }
 
         public Card ToDomain() => (Card)this;
 

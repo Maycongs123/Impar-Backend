@@ -21,10 +21,9 @@ namespace Impar.Api.Controllers
         }
 
         [HttpPost("", Name = nameof(CreateCard))]
-        [Consumes("multipart/form-data")]
         [SwaggerOperation(Summary = "Create a new card", Description = "Creates a new card and returns it")]
         [SwaggerResponse(200, "Created card", typeof(CardResponse))]
-        public async Task<ActionResult> CreateCard([FromForm] CreateCardRequest request)
+        public async Task<ActionResult> CreateCard([FromBody] CreateCardRequest request)
         {
             return await _cardService.Create(request);
         }

@@ -15,3 +15,11 @@
 /Impar.Repositories/obj
 /Impar.Services/bin/Debug/net6.0
 /Impar.Services/obj
+/Impar.Api/bin/Release/net6.0
+/Impar.Api/Properties/PublishProfiles
+*.user
+/Impar.Common/bin/Release/net6.0
+/Impar.Domain/bin/Release/net6.0
+/Impar.DTO/bin/Release/net6.0
+/Impar.Repositories/bin/Release/net6.0
+/Impar.Services/bin/Release/net6.0

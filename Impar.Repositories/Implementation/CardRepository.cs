@@ -62,34 +62,32 @@ namespace Impar.Repositories.Implementation
             }
         }
 
-
-
         public async Task<PageResponse<GetAllCardsView>> Get(GetAllCardsFilter filter)
         {
             var cardQueryBuilder = new StringBuilder(@"
-                                                     SELECT 
-                                                         c.Id,
-                                                         c.Name,
-                                                         c.Status,
-                                                         p.Id As PhotoId,
-                                                         p.Base64 AS PhotoBase64
-                                                     FROM Cards c
-                                                     LEFT JOIN Photos p ON c.PhotoId = p.Id
-                                                     WHERE 1=1");
+                                              SELECT 
+                                                  c.Id,
+                                                  c.Name,
+                                                  c.Status,
+                                                  p.Id As PhotoId,
+                                                  p.Base64 AS PhotoBase64
+                                              FROM Cards c
+                                              LEFT JOIN Photos p ON c.PhotoId = p.Id
+                                              WHERE 1=1");
 
             var countQueryBuilder = new StringBuilder(@"
-                                                      SELECT COUNT(*)
-                                                      FROM Cards c
-                                                      LEFT JOIN Photos p ON c.PhotoId = p.Id
-                                                      WHERE 1=1");
+                                               SELECT COUNT(*)
+                                               FROM Cards c
+                                               LEFT JOIN Photos p ON c.PhotoId = p.Id
+                                               WHERE 1=1");
 
             var conditions = new List<string>();
             var parameters = new DynamicParameters();
 
             if (!string.IsNullOrEmpty(filter.Name))
             {
-                conditions.Add("LOWER(c.Name) LIKE LOWER(@Name)");
-                parameters.Add("Name", $"%{filter.Name}%");
+                conditions.Add("LOWER(c.Name) LIKE LOWER(@Name + '%')");
+                parameters.Add("Name", filter.Name); 
             }
 
             if (conditions.Any())
@@ -100,8 +98,8 @@ namespace Impar.Repositories.Implementation
             }
 
             cardQueryBuilder.Append(@"
-                                   ORDER BY " + filter.OrderBy.Column + " " + filter.OrderBy.Direction + @"
-                                   OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;");
+                            ORDER BY " + filter.OrderBy.Column + " " + filter.OrderBy.Direction + @"
+                            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;");
 
             parameters.Add("PageSize", filter.PageSize);
             parameters.Add("Offset", filter.Offset);
@@ -129,7 +127,6 @@ namespace Impar.Repositories.Implementation
                 };
             }
         }
-
 
         public async Task<CardView> GetCardWithPhotoById(int id)
         {
