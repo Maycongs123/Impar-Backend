@@ -75,6 +75,7 @@ namespace Impar.Services.Implementation
             if (request.PhotoId.HasValue)
             {
                 await _cardRepository.UpdatePhotoBase64((int)request.PhotoId, request.PhotoBase64);
+                card.PhotoBase64 = request.PhotoBase64;
             }
 
             await _cardRepository.Update(card);
